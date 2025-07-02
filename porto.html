@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fardan | VarShade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #111827;
+      --bg2: #1f2937;
+      --text: #f9fafb;
+      --subtext: #d1d5db;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --button-text: #ffffff;
+    }
+
+    [data-theme="light"] {
+      --bg: #f3f4f6;
+      --bg2: #ffffff;
+      --text: #1f2937;
+      --subtext: #4b5563;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --button-text: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg), var(--bg2));
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      transition: background 0.4s ease, color 0.4s ease;
+      position: relative;
+    }
+
+    .theme-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toggle-theme, .toggle-music {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-theme:hover, .toggle-music:hover {
+      background: var(--accent);
+      color: var(--button-text);
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 9999px;
+      border: 4px solid var(--accent);
+      margin-top: 4rem;
+      margin-bottom: 1rem;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .bio {
+      font-size: 0.95rem;
+      color: var(--subtext);
+      margin-bottom: 2rem;
+      text-align: center;
+      max-width: 320px;
+    }
+
+    .category {
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 1.2rem;
+    }
+
+    .category h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: var(--subtext);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .link-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .link-button {
+      background-color: var(--accent);
+      color: var(--button-text);
+      text-decoration: none;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .link-button:hover {
+      background-color: var(--accent-hover);
+      transform: scale(1.02);
+    }
+
+    .link-button[data-note]:after {
+      content: attr(data-note);
+      position: absolute;
+      right: 0.5rem;
+      bottom: 0.3rem;
+      font-size: 0.6rem;
+      background: var(--subtext);
+      color: var(--bg);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .cassette {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 1.5rem 0 0.5rem;
+  animation: spin 2.5s linear infinite;
+  display: none;
+}
+
+    .cassette.playing {
+      display: block;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .progress-bar {
+      height: 6px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 5px;
+      margin-top: 1rem;
+      background: rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.2s;
+    }
+
+    .player-info {
+      font-size: 0.9rem;
+      color: var(--subtext);
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    .clock {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--subtext);
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 2rem 0 1rem;
+      font-size: 0.75rem;
+      color: var(--subtext);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-controls">
+    <button class="toggle-theme" onclick="toggleTheme()">🌗 Theme</button>
+    <button class="toggle-music" onclick="toggleMusic()">🎵 Music</button>
+  </div>
+
+  <img src="https://files.catbox.moe/nr78y2.jpg" alt="Profile Picture" class="avatar" />
+  <h1>Fardan | VarShade</h1>
+  <p class="bio">Welcome to my portal. Explore my tools, APIs, and resources all in one place.</p>
+
+<!-- Social Media Section -->
+  <div class="category">
+    <h2><i class="bx bx-glasses"></i> Social Media</h2>
+    <div class="link-list">
+      <a href="https://www.instagram.com/fardannfm" class="link-button"><i class="bx bxl-instagram"></i>Instagram</a>
+      <a href="https://youtube.com/@FarXyz-ID" class="link-button"><i class="bx bxl-youtube"></i>YouTube</a>
+      <a href="https://twitter.com/FarXyz-ID" class="link-button"><i class="bx bxl-twitter"></i>Twitter</a>
+      <a href="https://tiktok.com/@var_prikitiw" class="link-button"><i class="bx bxl-tiktok"></i>TikTok</a>
+      <a href="https://threads.net/@" class="link-button" data-note="soon"><i class="bx bxl-instagram-alt"></i>Threads</a>
+      <a href="https://linkedin.com/in/" class="link-button" data-note="soon"><i class="bx bxl-linkedin-square"></i>LinkedIn</a>
+    </div>
+  </div>
+
+  <div class="category">
+    <h2><i class="bx bx-code-alt"></i> VarShade APIs</h2>
+    <div class="link-list">
+      <a href="https://varshade.up.railway.app" class="link-button"><i class="bx bx-link-alt"></i>Rest API (Free)</a>
+    </div>
+  </div>
+  
+<!-- WhatsApp Section -->
+<div class="category">
+  <h2><i class="bx bxl-whatsapp"></i> WhatsApp</h2>
+  <div class="link-list">
+    <a href="https://wa.me/6283891813151?text=halo" target="_blank" class="link-button">
+      <i class="bx bxl-whatsapp"></i> Contact WhatsApp
+    </a>
+        <a href="https://wa.me/6282120627665?text=.menu" target="_blank" class="link-button">
+      <i class="bx bxl-whatsapp"></i> Bot WhatsApp
+    </a>
+    <a href="https://chat.whatsapp.com/KEcrlL57xjrGGRs8ii01zd" target="_blank" class="link-button">
+      <i class="bx bxl-whatsapp"></i> Group WhatsApp
+    </a>
+    <a href="https://whatsapp.com/channel/0029Vb2NYCr1CYoMnGK0nu12" target="_blank" class="link-button">
+      <i class="bx bxl-whatsapp"></i> Saluran WhatsApp
+    </a>
+  </div>
+</div>
+
+  <img src="https://img1.pixhost.to/images/6913/617698551_upload.jpg" alt="Cassette" class="cassette" id="cassette" />
+  <div class="player-info" id="music-info">🎧 Tidak ada musik diputar</div>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  <div class="clock" id="clock">🕒 WIB: --:--:--</div>
+
+  <footer>&copy; 2025 Fardan | VarShade, All rights reserved.</footer>
+
+  <audio id="audio" preload="auto"></audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const info = document.getElementById('music-info');
+    const cassette = document.getElementById('cassette');
+    const progress = document.getElementById('progress');
+    const clock = document.getElementById('clock');
+
+    const playlist = [
+      { title: "The Cut That Always Bleeds x WILDFLOWER", url: "https://files.catbox.moe/tk68he.mp3" },
+      { title: "Dream, Ivory - welcome and goodbye", url: "https://files.catbox.moe/puyh15.mp3" },
+      { title: "Djo - End of Beginning", url: "https://files.catbox.moe/0m4xv1.mp3" }
+    ];
+
+    let currentTrack = 0;
+
+    function loadTrack(index) {
+      audio.src = playlist[index].url;
+      audio.load();
+      audio.play();
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      const newTheme = current === "light" ? "dark" : "light";
+      html.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+    }
+
+    function toggleMusic() {
+      if (audio.paused) {
+        loadTrack(currentTrack);
+      } else {
+        audio.pause();
+      }
+    }
+
+    audio.ontimeupdate = () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.style.width = `${percent}%`;
+    };
+
+    audio.onplay = () => {
+      cassette.classList.add('playing');
+      const duration = formatTime(audio.duration);
+      info.textContent = `🎧 Now Playing: ${playlist[currentTrack].title}`;
+    };
+
+    audio.onpause = () => {
+      cassette.classList.remove('playing');
+      info.textContent = `🎧 Playback paused`;
+    };
+
+    audio.onended = () => {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      loadTrack(currentTrack);
+    };
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      const time = wib.toISOString().substr(11, 8);
+      clock.textContent = `🕒 WIB: ${time}`;
+    }, 1000);
+
+    // Theme persist
+    (function () {
+      const saved = localStorage.getItem("theme");
+      if (saved) document.documentElement.setAttribute("data-theme", saved);
+    })();
+  </script>
+</body>
+</html>
